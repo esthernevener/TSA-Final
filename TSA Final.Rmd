@@ -1,13 +1,14 @@
 ---
 title: "TSA Final Exam"
 author: "Mary Esther Nevener"
-date: "May 5, 2020"
+date: "May 7, 2020"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(bookdown)
 ```
 
 ## TIME SERIES ANALYSIS FINAL EXAM
@@ -51,18 +52,113 @@ plot(zt, type="b", main = "Simulated MA(2) Series")
 ```{r}
 acf(zt, xlim=c(1,10), main="ACF for simulated MA(2) Data")
 ``` 
+
+###PROBLEM 5
+5. [20pts] Compute expressions for the partial autocorrelation function for AR(1) and MA(1) models.
+
+$$
+\textbf{AR(1)}\\
+x_t=\phi x_{t-1}+\epsilon_{t}\\
+|\phi|\lt 1\\
+\text{var}(\epsilon_t)=\sigma^2\\
+\text{var}(x_t)=\frac{\sigma^2}{1-\phi^2}\\
+$$
+
+$$
+\textbf{PACF FOR AR(1)}\\
+\begin{align*}
+\phi_{11}&=\frac{cov(x_t,x_{t+1})}{var(x_t)}\\
+&=\frac{E[\phi x_{t-1}+\epsilon_t)x_{t-1}]}{var(x_t)}\\
+&= \phi \frac{var(x_t)}{var(x_t)}\\
+&= \phi\\
+cov(e_t,e_{t+2})&= E[(x_t-\phi x_{t+1})(x_{t+2}-\phi x_{t+1})]\\
+&= E[(x_t-\phi x_{t+1})\epsilon_{t+2}]\\
+&=0\\
+\phi_{22}&=\frac{cov(e_t,e_{t+2})}{[var(e_t)var(e_{t+2})]^\frac{1}{2}}\\
+&= 0\\
+\phi_{kk}&=0 \text{ for all k } \geq 2
+\end{align*}
+$$
+
+
+$$
+\textbf{MA(1)}\\
+x_t=\epsilon_t+\theta\epsilon_{t-1}\\
+var(x_t)=(1+\theta^2)\sigma^2\\
+E[x_t.x_{t+1}]=\theta\sigma^2\\
+E[x_t.x_{t+2}]=0\\
+$$
+
+
+$$
+\textbf{PACF FOR MA(1)}\\
+\begin{align*}
+\phi_{11}&=\frac{E[x_t,x_{t+1}]}{var(x_t)}\\
+&=\frac{\theta}{1+\theta^2}\\
+\text{E}[e_t,e_{t+2}]&=\text{E}\big[ (x_t-\alpha x_{t+1})(x_{t+2}-\alpha x_{t+1})\big]\\
+&=\text{E}[x_tx_{t+2}]-\alpha \text{E}[x_tx_{t+1}] - \alpha \text{E}[x_{t+1}x_{t+2}] -\alpha^2 \text{E}[x_{t+1}^2] \\
+&= 0 -\alpha\theta\sigma^2  -\alpha\theta\sigma^2 + \alpha^2(1+\theta^2)\sigma^2\\
+&=-\frac{2\theta^2}{(1+\theta^2)}\sigma^2+\frac{\theta^2\sigma^2}{(1+\theta^2)}\\
+&=-\frac{\theta^2\sigma^2}{1+\theta^2}\\
+\text{var}(e_t)&=\text{E}[x_t-\alpha x_{t+1}]^2\\
+&= \text{E}(x_t^2)-2\alpha\text{E}(x_t x_{t+1})+ \alpha^2 \text{E}(x_{t+1}^2)\\
+&= (1+\theta^2)\sigma^2-2\alpha \theta\sigma^2 + \alpha^2(1+\theta^2)\sigma^2\\
+&= \frac{\sigma^2}{(1+\theta^2)}\big[1+\theta^2+\theta^4\big] \\
+\text{var}(e_{t+2})&=\text{E}[x_{t+2}-\alpha x_{t+1}]^2\\
+&= \text{E}(x_{t+2}^2)-2\alpha\text{E}(x_{t+2} x_{t+1})+ \alpha^2 \text{E}(x_{t+1}^2)\\
+&= (1+\theta^2)\sigma^2-2\alpha \theta\sigma^2 + \alpha^2(1+\theta^2)\sigma^2\\
+&= \frac{\sigma^2}{(1+\theta^2)}\big[1+\theta^2+\theta^4\big] \\
+\phi_{22}&=\frac{E[e_te_{t+2}]}{\big[\text{var}(e_t)\text{var}(e_{t+2})\big]^{\frac{1}{2}}}\\
+&=-\frac{\theta^2}{(1+\theta^2+\theta^4)} \\
+\phi_{kk}&=\frac{(-1)^{k-1}\theta^k(1-\theta^2)}{1-\theta^{2(k+1)}}\\
+\end{align*}
+$$
+
+
+
 ###PROBLEM 2
 2. [20pts] Download 1 time series containing trend and seasonality from http://www.statsci.org/datasets.html
 a. Plot each series and compute its ACF and PACF
 b. Based on the ACF and PACF, pick 2 distinct models and estimate their parameters
 c. Compare the residual for each model
 d. Which model is better and why?
+
+
+
+
+
+
+
+
+
+
 ###PROBLEM 3
 3. [20pts] Derive an expression for the power spectral density,$s_y(\omega)$ for the ARMA(1,1) model nad plot $s_y(\omega)$ for $0 \leq \omega \leq \pi$
+
+
+
+
+
+
+
+
 ###PROBLEM 4
 4. [20pts] Prove that conditional expectation minimizes the mean square error.
-###PROBLEM 5
-5. [20pts] Compute expressions for the partial autocorrelation function for AR(1) and MA(1) models.
+https://www.probabilitycourse.com/chapter9/9_1_5_mean_squared_error_MSE.php
+
+```{proof}
+```
+
+Let our estimate $\hat{x}$ be a function of our known $y$ such that $\hat{x}=g(y)$. The error of our estimate is given by $\widetilde{X}=X-\hat{x}=X-g(y)$. The mean square error of our estimate is given by $E[(X-\bar{x})^2|Y=y]=E[(X-g(y))^2|Y=y]$. By using calculus we can calculate the minimun MSE.\hat{x}_{min}
+$$
+\begin{align*}
+=E[(X-a)^2|Y=y]
+\end{align*}
+$$
+
+
+
+
 
 
  
