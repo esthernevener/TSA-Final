@@ -53,6 +53,93 @@ plot(zt, type="b", main = "Simulated MA(2) Series")
 acf(zt, xlim=c(1,10), main="ACF for simulated MA(2) Data")
 ``` 
 
+###PROBLEM 3
+3. [20pts] Derive an expression for the power spectral density,$s_y(\omega)$ for the ARMA(1,1) model and plot $s_y(\omega)$ for $0 \leq \omega \leq \pi$
+
+$$
+\textbf{POWER SPECTRAL DENSITY ARMA(1,1)}
+$$
+
+$$
+\begin{align*}
+\Phi(L)(y_t-\mu)&=\Psi(L)\epsilon_t\\
+\Phi(L)&=1-\phi L\\
+\Psi(L)&=1+\theta L\\
+\therefore (y_t-m)&=\frac{\Psi(L)}{\Phi(L)}\epsilon_t=\bar{\psi}(L)\epsilon_t\\
+g_y(z)&=\sigma^2\bar{\psi}(z)\bar{\psi}(z^{-1})\\
+s_y(\omega)&=\frac{\sigma^2}{2\pi}\bar{\psi}(e^{-i\omega})\bar{\psi}(e^{i\omega})\\
+\text{after factoring}\\
+\Phi(z)&=1-\alpha z\\
+\Psi(z)&=1+\beta z\\
+\text{after substituting}\\
+s_y(\omega)&=\frac{\sigma^2}{2\pi}\frac{1+\theta^2-2\theta \text{ cos}( \omega)}{1+\phi^2-2\phi \text{ cos}( \omega)}\\
+\text{after normalizing}\\
+\frac{2\pi}{\sigma^2}s_y(\omega)&=\frac{1+\theta^2-2\theta \text{ cos}( \omega)}{1+\phi^2-2\phi \text{ cos}( \omega)}\\
+\end{align*}
+$$
+$$
+\textbf{GRAPHING}\\
+0<|\theta|<1\\
+0<|\phi|<1\\
+\begin{matrix} 
+\omega=0 & \to & \frac{2\pi}{\sigma^2}s_y(\omega)=\frac{1+\theta^2-2\theta }{1+\phi^2-2\phi } & \to  & \frac{(\theta-1)^2}{(\phi-1)^2}\\
+\omega=\frac{\pi}{2} & \to & \frac{2\pi}{\sigma^2}s_y(\omega)=\frac{1+\theta^2 }{1+\phi^2}  &\to & \frac{\theta^2+1}{\phi^2+1}\\
+\omega=\pi &  \to & \frac{2\pi}{\sigma^2}s_y(\omega)=\frac{1+\theta^2+2\theta }{1+\phi^2+2\phi } &\to  & \frac{(\theta+1)^2}{(\phi+1)^2}\\
+\end{matrix}
+$$
+
+```{r}
+w<-c(0,pi/4,pi/2,3*pi/4,pi)
+y<- function (phi,theta,w){(1+theta^2-2*theta*cos(w))/(1+phi^2-2*phi*cos(w))}
+
+### WHEN THETA > PHI AND BOTH ARE POSITIVE
+theta<-.55
+phi<-  .45
+plot (y(phi,theta,w),type="b", main="WHEN THETA > PHI AND BOTH ARE POSITIVE", xlab="OMEGA")
+
+### WHEN THETA < PHI AND BOTH ARE POSITIVE
+theta<-.45
+phi<-  .55
+plot (y(phi,theta,w),type="b", main="WHEN THETA < PHI AND BOTH ARE POSITIVE", xlab="OMEGA")
+
+### WHEN THETA > PHI AND BOTH ARE NEGATIVE
+theta<--.45
+phi<-  -.55
+plot (y(phi,theta,w),type="b", main="WHEN THETA > PHI AND BOTH ARE NEGATIVE", xlab="OMEGA")
+
+### WHEN THETA < PHI AND BOTH ARE NEGATIVE
+theta<--.55
+phi<-  -.45
+plot (y(phi,theta,w),type="b", main="WHEN THETA < PHI AND BOTH ARE NEGATIVE", xlab="OMEGA")
+
+```
+
+###PROBLEM 4
+4. [20pts] Prove that conditional expectation minimizes the mean square error.
+
+**PROOF:**
+
+>Let our estimate $\hat{x}$ be a function of our known $y$ such that $\hat{x}=g(y)$. The error of our estimate is given by $\widetilde{X}=X-\hat{x}=X-g(y)$. The mean square error of our estimate is given by $E[(X-\bar{x})^2|Y=y]=E[(X-g(y))^2|Y=y]$. By using calculus we can calculate the minimun MSE.
+$$
+\begin{align*}
+\text{MSE} &=E[(X-\hat{x})^2|Y=y]\\
+&= E[X^2|Y=y]-2\hat{x}E[X|Y=y]+\hat{x^2}\\
+\text{MSE'} &= -2E[X|Y=y]+2\hat{x}=0\\
+\hat{x}_{\text{MIN}} &= E[X|Y=y]
+\end{align*}
+$$
+Suppose that we would like to estimate the value of an unobserved random variable $X$, by observing the value of a random variable $Y=y$. In general, our estimate $\hat{x}$ is a function of $y$, so $\hat{X}=g(Y)$. Since $Y$ is a random variable, $\hat{X}=g(Y)$ is also a random variable. The error of our estimate is given by $\tilde{X}=X-\bar{X}=X-g(Y)$. The mean square error of our estimate is given by $E[(X-\hat{X})^2]=E[(X-g(Y))^2]$. By using calculus we can calculate the minimun MSE.
+$$
+\begin{align*}
+\text{MSE} &=E[(X-\hat{X})^2|Y]\\
+&= E[X^2|Y]-2\hat{X}E[X|Y]+\hat{X^2}\\
+\text{MSE'} &= -2E[X|Y]+2\hat{X}=0\\
+\hat{X}_{\text{MIN}} &= E[X|Y]
+\end{align*}
+$$
+
+**END PROOF.**
+
 ###PROBLEM 5
 5. [20pts] Compute expressions for the partial autocorrelation function for AR(1) and MA(1) models.
 
@@ -116,6 +203,16 @@ $$
 
 
 
+
+
+
+
+
+
+
+
+
+
 ###PROBLEM 2
 2. [20pts] Download 1 time series containing trend and seasonality from http://www.statsci.org/datasets.html
 a. Plot each series and compute its ACF and PACF
@@ -124,41 +221,110 @@ c. Compare the residual for each model
 d. Which model is better and why?
 
 
+####2a)  
 
+```{r}
+###PLOT OF NEW ZEALAND EMPLOYMENT NUMBERS FROM 1990 TO 2012
+plot(nz)
+  ###REMOVING TREND WITH LEAST SQUARES METHOD
+    #CALCULATING A* and B*
+    y<-nz$`Total Employed`
+    t<-1:88
+    ybar<-mean(y)
+    tbar<-mean(t)
+    bstar<-cov(y,t)/var(t)
+    astar<- ybar-bstar*tbar
+    #REMOVING TREND FROM Y TO GIVE US X
+    xt<-y[t]-(astar+bstar*t)
+    plot(xt)
+  ###REMOVING SEASONALITY WITH METHOD OF LOCAL TREND
+    n=88
+    k=22
+    d=4
+    
+    #TURNING DATA INTO MATRIX
+    ymatrix<-matrix(xt,nrow=k, ncol=d)
+    
+    #FINDING AVERAGE OF EVERY ROW
+    r1<-mean(ymatrix[1,])
+    r2<-mean(ymatrix[2,])  
+    r3<-mean(ymatrix[3,])
+    r4<-mean(ymatrix[4,])    
+    r5<-mean(ymatrix[5,])    
+    r6<-mean(ymatrix[6,])    
+    r7<-mean(ymatrix[7,])    
+    r8<-mean(ymatrix[8,])    
+    r9<-mean(ymatrix[9,])    
+    r10<-mean(ymatrix[10,])    
+    r11<-mean(ymatrix[11,])    
+    r12<-mean(ymatrix[12,])    
+    r13<-mean(ymatrix[13,])
+    r14<-mean(ymatrix[14,])
+    r15<-mean(ymatrix[15,])
+    r16<-mean(ymatrix[16,])    
+    r17<-mean(ymatrix[17,])
+    r18<-mean(ymatrix[18,])
+    r19<-mean(ymatrix[19,])
+    r20<-mean(ymatrix[20,])
+    r21<-mean(ymatrix[21,])
+    r22<-mean(ymatrix[22,])    
+    muhat<-c(r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14,r15,r16,r17,r18,r19,r20,r21,r22)
+    
+    #MAKING THE ROW AVERAGES A MATRIX
+    muhatmatrix<-matrix(muhat,nrow=22,ncol=1)
+  
+    #SUBTRACTING THE AVERAGE OF EACH ROW FROM EVERY ELEMENT IN ROW
+    ymatrix[,1]=ymatrix[,1]-muhatmatrix
+    ymatrix[,2]=ymatrix[,2]-muhatmatrix
+    ymatrix[,3]=ymatrix[,3]-muhatmatrix
+    ymatrix[,4]=ymatrix[,4]-muhatmatrix
+    
+    #FINDING AVERAGE OF EVERY COLUMN OF NEW MATRIX
+    c1<-mean(ymatrix[,1])   
+    c2<-mean(ymatrix[,2])   
+    c3<-mean(ymatrix[,3])   
+    c4<-mean(ymatrix[,4])   
+    shat<-c(c1,c2,c3,c4)
+    
+    #MAKING THE COLUMN AVERAGES A MATRIX
+    shatmatrix<-matrix(shat,nrow=1,ncol=4)
+    
+    #SUBTRACTING THE AVERAGE OF EACH COLUMN FROM EVERY ELEMENT IN COLUMN
+    ymatrix[1,]=ymatrix[1,]-shatmatrix
+    ymatrix[2,]=ymatrix[2,]-shatmatrix
+    ymatrix[3,]=ymatrix[3,]-shatmatrix
+    ymatrix[4,]=ymatrix[4,]-shatmatrix
+    ymatrix[5,]=ymatrix[5,]-shatmatrix
+    ymatrix[6,]=ymatrix[6,]-shatmatrix
+    ymatrix[7,]=ymatrix[7,]-shatmatrix
+    ymatrix[8,]=ymatrix[8,]-shatmatrix
+    ymatrix[9,]=ymatrix[9,]-shatmatrix
+    ymatrix[10,]=ymatrix[10,]-shatmatrix
+    ymatrix[11,]=ymatrix[11,]-shatmatrix
+    ymatrix[12,]=ymatrix[12,]-shatmatrix
+    ymatrix[13,]=ymatrix[13,]-shatmatrix
+    ymatrix[14,]=ymatrix[14,]-shatmatrix
+    ymatrix[15,]=ymatrix[15,]-shatmatrix     
+    ymatrix[16,]=ymatrix[16,]-shatmatrix
+    ymatrix[17,]=ymatrix[17,]-shatmatrix
+    ymatrix[18,]=ymatrix[18,]-shatmatrix
+    ymatrix[19,]=ymatrix[19,]-shatmatrix
+    ymatrix[20,]=ymatrix[20,]-shatmatrix
+    ymatrix[21,]=ymatrix[21,]-shatmatrix
+    ymatrix[22,]=ymatrix[22,]-shatmatrix
+    
+    #TURNING THE NEW MATRIX BACK INTO DATA
+    xt<-c(ymatrix[1,],ymatrix[2,],ymatrix[3,],ymatrix[4,],ymatrix[5,],ymatrix[6,],ymatrix[7,],ymatrix[8,],ymatrix[9,],ymatrix[10,],ymatrix[11,],ymatrix[12,],ymatrix[13,],ymatrix[14,],ymatrix[15,],ymatrix[16,],ymatrix[17,],ymatrix[18,],ymatrix[19,],ymatrix[20,],ymatrix[21,],ymatrix[22,])
+    
+###PLOTTING DETRENDED DATA
+plot(xt, ylab="NZ EMPLOYMENT", xlab="TIME", type="b")
 
-
-
-
-
-
-
-###PROBLEM 3
-3. [20pts] Derive an expression for the power spectral density,$s_y(\omega)$ for the ARMA(1,1) model nad plot $s_y(\omega)$ for $0 \leq \omega \leq \pi$
-
-
-
-
-
-
-
-
-###PROBLEM 4
-4. [20pts] Prove that conditional expectation minimizes the mean square error.
-https://www.probabilitycourse.com/chapter9/9_1_5_mean_squared_error_MSE.php
-
-```{proof}
+###COMPUTING ACF AND PACF
+acfxt<-acf(xt, main="ACF FOR XT")
+pacfxt<-pacf(xt, main="PACF FOR XT")
 ```
-
-Let our estimate $\hat{x}$ be a function of our known $y$ such that $\hat{x}=g(y)$. The error of our estimate is given by $\widetilde{X}=X-\hat{x}=X-g(y)$. The mean square error of our estimate is given by $E[(X-\bar{x})^2|Y=y]=E[(X-g(y))^2|Y=y]$. By using calculus we can calculate the minimun MSE.\hat{x}_{min}
-$$
-\begin{align*}
-=E[(X-a)^2|Y=y]
-\end{align*}
-$$
+####2b)  
 
 
 
 
-
-
- 
